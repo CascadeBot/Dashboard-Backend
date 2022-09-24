@@ -34,7 +34,7 @@ export async function setupFastify(): Promise<FastifyInstance> {
     app.listen(
       {
         port: config.server.port,
-        host: '0.0.0.0'
+        host: '0.0.0.0',
       },
       function (err) {
         if (err) {
