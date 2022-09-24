@@ -1,7 +1,8 @@
 # linting workflow 
 #  - runs npm run lint on the project
+#  - builds docker container to test if it builds
 
-name: linting
+name: Code Quality
 
 on: pull_request
 
@@ -28,3 +29,9 @@ jobs:
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         report-json: "eslint_report.json"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build Docker Image
+      run: docker build .
