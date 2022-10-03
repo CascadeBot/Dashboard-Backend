@@ -1,0 +1,27 @@
+type OAuthInfo {
+  """
+  URL to redirect the client to, this starts the oauth authentication flow
+  """
+  authorizeUrl: String!
+}
+
+type SessionToken {
+  """
+  session token, to be used as bearer
+  """
+  token: String!
+}
+
+type Query {
+  """
+  Get OAuth auth flow information
+  """
+  getOAuthInfo: OAuthInfo
+}
+
+type Mutation {
+  """
+  Exchange a login token for a session token
+  """
+  exchangeLoginToken(loginToken: String!): SessionToken
+}
