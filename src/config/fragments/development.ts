@@ -12,4 +12,7 @@ export const developmentFragment = {
   logging: {
     format: 'pretty',
   },
+  redis: {
+    url: 'redis://localhost:6379',
+  },
 };

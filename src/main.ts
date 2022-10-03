@@ -1,5 +1,6 @@
 import { setupFastify } from '@modules/fastify';
 import { scopedLogger } from '@logger';
+import { setupRedis } from '@modules/redis';
 
 const log = scopedLogger('backend');
 
@@ -9,6 +10,7 @@ async function bootstrap(): Promise<void> {
   });
 
   await setupFastify();
+  await setupRedis();
 
   log.info(`App setup, ready to accept connections`, {
     evt: 'success',

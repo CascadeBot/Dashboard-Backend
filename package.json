@@ -4,11 +4,9 @@
     "dev": "nodemon -r tsconfig-paths/register src/main.ts",
     "build": "npm run build:pre && npm run build:compile && npm run build:post",
     "start": "node dist/main.js",
-
     "lint": "eslint --ext .ts,.js,.json src/",
     "lint:fix": "eslint --fix --ext .ts,.js,.json src/",
     "lint:report": "eslint --ext .ts,.js,.json --output-file eslint_report.json --format json src/",
-
     "build:pre": "rimraf dist/",
     "build:compile": "tsc && tsc-alias",
     "build:post": "copyfiles -u 1 src/**/*.graphql dist/"
@@ -37,6 +35,7 @@
     "graphql-playground-html": "^1.6.30",
     "mercurius": "^11.0.0",
     "neat-config": "^1.0.0",
+    "redis": "^4.3.1",
     "winston": "^3.8.2",
     "winston-console-format": "^1.0.8",
     "yup": "^0.32.11"
