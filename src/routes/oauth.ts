@@ -18,6 +18,10 @@ export const OauthRouter: FastifyPluginAsyncTypebox = async (app) => {
     },
     async (req, res) => {
       console.log(req.query.code, req.query.state);
+      // TODO exchange auth code for discord user
+      // TODO parse state variable
+      // TODO create session and create session token
+      // TODO redirect to client application with token and redirect from state
       res.send('Hello world');
       return;
     },

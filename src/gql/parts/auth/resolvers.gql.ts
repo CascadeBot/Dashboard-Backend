@@ -1,8 +1,8 @@
 export default {
   Query: {
     getOAuthInfo: () => {
-      console.log('test');
-      // TODO implement query
+      // TODO reply with authorize url
+      // TODO embed state into url
       return {
         authorizeUrl: 'Hello world',
       };
@@ -10,7 +10,7 @@ export default {
   },
   Mutation: {
     exchangeLoginToken: () => {
-      // TODO implement mutation
+      // TODO create session and return session token
       return {
         token: 'Hello world',
       };
