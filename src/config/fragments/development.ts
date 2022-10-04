@@ -17,5 +17,6 @@ export const developmentFragment = {
   },
   security: {
     sessionSecret: 'hello-world',
+    loginPublicKey: 'hi:)',
   },
 };
