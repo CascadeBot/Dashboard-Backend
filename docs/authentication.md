@@ -54,11 +54,12 @@ The backend also has a few routes for authentication, here is what they are and 
 
 ### 3.1 Login token
 
-This token is a JWT. it must be signed with the public key (referenced under "loginKey").
-It must expire after 5 minutes of createion. its payload is the following:
+This token is a JWT. it must be signed with the private key (referenced under "loginPrivateKey").
+It must expire after 5 minutes of creation. its payload is the following:
 ```ts
 {
-  discordId: string;
+  // discord id from user
+  did: string;
 }
 ```
 
@@ -69,10 +70,10 @@ It must not expire. its payload is the following:
 ```ts
 {
   // user id, useful for simple requesting of user
-  userId: string;
+  uid: string;
 
   // session id, used to find more info about the session and check if it expired
-  sessionId: string;
+  sid: string;
 }
 ```
 

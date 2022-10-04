@@ -12,6 +12,7 @@
     "build:post": "copyfiles -u 1 src/**/*.graphql dist/"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.7.20",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
@@ -33,11 +34,11 @@
     "fastify": "^4.6.0",
     "graphql": "^16.6.0",
     "graphql-playground-html": "^1.6.30",
+    "jsonwebtoken": "^8.5.1",
     "mercurius": "^11.0.0",
     "neat-config": "^1.0.0",
     "redis": "^4.3.1",
     "winston": "^3.8.2",
-    "winston-console-format": "^1.0.8",
-    "yup": "^0.32.11"
+    "winston-console-format": "^1.0.8"
   }
 }

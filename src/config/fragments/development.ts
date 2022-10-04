@@ -15,4 +15,7 @@ export const developmentFragment = {
   redis: {
     url: 'redis://localhost:6379',
   },
+  security: {
+    sessionSecret: 'hello-world',
+  },
 };
