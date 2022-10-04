@@ -24,7 +24,7 @@ export async function setupFastify(): Promise<FastifyInstance> {
       return;
     }
 
-    log.error('unhandled exception on server', err);
+    log.error('unhandled exception on server:', err);
     reply.status(500).send({
       status: 500,
       error: 'Internal server error',

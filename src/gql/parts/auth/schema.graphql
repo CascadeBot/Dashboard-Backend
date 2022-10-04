@@ -2,7 +2,7 @@ type OAuthInfo {
   """
   URL to redirect the client to, this starts the oauth authentication flow
   """
-  authorizeUrl: String!
+  authorizeUrl(redirect: String): String!
 }
 
 type SessionToken {

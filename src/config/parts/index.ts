@@ -1,4 +1,5 @@
 import joi from 'joi';
+import { DiscordConf, discordConfSchema } from './discord';
 import { GraphqlConf, graphqlConfSchema } from './graphql';
 import { LoggingConf, loggingConfSchema } from './logging';
 import { RedisConf, redisConfSchema } from './redis';
@@ -11,6 +12,7 @@ export interface Config {
   graphql: GraphqlConf;
   redis: RedisConf;
   security: SecurityConf;
+  discord: DiscordConf;
 }
 
 export const configSchema = joi.object<Config>({
@@ -19,4 +21,5 @@ export const configSchema = joi.object<Config>({
   logging: loggingConfSchema.default(),
   redis: redisConfSchema.default(),
   security: securityConfSchema.default(),
+  discord: discordConfSchema.default(),
 });

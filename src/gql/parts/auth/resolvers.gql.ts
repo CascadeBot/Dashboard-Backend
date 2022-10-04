@@ -1,19 +1,30 @@
+import { createOauthUrl } from '@utils/discord/oauth';
+import { decodeLoginToken } from '@utils/tokens/login';
+
 export default {
   Query: {
-    getOAuthInfo: () => {
-      // TODO reply with authorize url
-      // TODO embed state into url
-      return {
-        authorizeUrl: 'Hello world',
-      };
-    },
+    // needed for some reason?
+    getOAuthInfo: () => ({}),
   },
   Mutation: {
-    exchangeLoginToken: () => {
-      // TODO create session and return session token
+    exchangeLoginToken: (ref, params) => {
+      const parsedToken = decodeLoginToken(params.loginToken);
+      // TODO throw official graphql error (status 400 with error code)
+      if (!parsedToken.valid) throw new Error('invalid login token');
+
+      // TODO create session token and session
       return {
         token: 'Hello world',
       };
+    },
+  },
+  OAuthInfo: {
+    authorizeUrl: (ref, params) => {
+      // TODO check if redirect is valid
+      const url = createOauthUrl({
+        redirect: params.redirect,
+      });
+      return url;
     },
   },
 };

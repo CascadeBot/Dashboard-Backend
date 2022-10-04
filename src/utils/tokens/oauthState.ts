@@ -16,7 +16,7 @@ export function createOauthState(data: OauthStateInput): string {
 }
 
 const stateSchema = joi.object<OauthState>({
-  redirect: joi.string().optional(),
+  redirect: joi.string().allow(null).optional(),
 });
 export type decodeOauthStateOutput =
   | { valid: false; payload: null }
