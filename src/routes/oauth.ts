@@ -12,6 +12,7 @@ const callbackSchema = Type.Object({
   state: Type.Optional(Type.String({ minLength: 1 })),
 });
 
+// TODO remove query params from logs (code is logged whoops)
 export const OauthRouter: FastifyPluginAsyncTypebox = async (app) => {
   app.get(
     '/discord/callback',
