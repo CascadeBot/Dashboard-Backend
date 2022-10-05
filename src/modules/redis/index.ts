@@ -1,6 +1,7 @@
 import { config } from '@config';
 import { scopedLogger } from '@logger';
 import { createClient, RedisClientType } from 'redis';
+import { setupSessions } from './sessions';
 
 const log = scopedLogger('redis');
 
@@ -19,6 +20,10 @@ export async function setupRedis(): Promise<void> {
   log.info(`connecting to redis...`, { evt: 'connect' });
   await redisClient.connect();
   redis = redisClient;
+
+  log.info(`Configuring redis...`, { evt: 'configure-start' });
+  await setupSessions(redis);
+  log.info(`Configured redis!`, { evt: 'configure-end' });
 
   log.info(`successfully connected to redis`, { evt: 'success' });
 }

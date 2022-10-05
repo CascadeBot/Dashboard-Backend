@@ -1,4 +1,5 @@
 import { config } from '@config';
+import { URLSearchParams } from 'url';
 import winston from 'winston';
 import { consoleFormat } from 'winston-console-format';
 
@@ -71,10 +72,26 @@ export function makeFastifyLogger(logger: winston.Logger) {
         const { request, statusCode } = res;
         if (request.method === 'OPTIONS') return false;
 
+        let url = request.url;
+        try {
+          const pathParts = (request.url as string).split('?', 2);
+          if (pathParts[1]) {
+            const searchParams = new URLSearchParams(pathParts[1]);
+            searchParams.forEach((v, key) => {
+              const hasSecretData = ['code', 'token'].includes(key);
+              if (hasSecretData) searchParams.set(key, 'REDACTED');
+            });
+            pathParts[1] = searchParams.toString();
+          }
+          url = pathParts.join('?');
+        } catch {
+          // ignore error, invalid search params will just log normally
+        }
+
         // create log message
-        info.message = `[${statusCode}] ${request.protocol.toUpperCase()} ${
-          request.url
-        } - ${responseTime.toFixed(2)}ms`;
+        info.message = `[${statusCode}] ${request.protocol.toUpperCase()} ${url} - ${responseTime.toFixed(
+          2,
+        )}ms`;
         return info;
       }
       return info;

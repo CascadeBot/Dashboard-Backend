@@ -4,6 +4,8 @@ import { OauthState, parseOauthState } from '@utils/tokens/oauthState';
 import { URL } from 'url';
 import { config } from '@config';
 import { getUserFromCode } from '@utils/discord/oauth';
+import { createSessionToken } from '@utils/tokens/session';
+import { createUserAndSession } from '@utils/session';
 
 export const OauthRouterPrefix = '/oauth2';
 
@@ -12,7 +14,6 @@ const callbackSchema = Type.Object({
   state: Type.Optional(Type.String({ minLength: 1 })),
 });
 
-// TODO remove query params from logs (code is logged whoops)
 export const OauthRouter: FastifyPluginAsyncTypebox = async (app) => {
   app.get(
     '/discord/callback',
@@ -33,12 +34,16 @@ export const OauthRouter: FastifyPluginAsyncTypebox = async (app) => {
 
       // TODO handle invalid code -> status 400
       const discordUser = await getUserFromCode(req.query.code);
-      // TODO create session and create session token
+      const { sessionId, userId } = await createUserAndSession(discordUser.id);
+      const sessionToken = createSessionToken({
+        sessionId,
+        userId,
+      });
 
       // 302 will redirect to a GET request
       // TODO verify if redirect is valid
       const url = new URL(config.server.appUrl + 'login/callback');
-      url.searchParams.append('token', 'hello-world');
+      url.searchParams.append('token', sessionToken);
       if (state?.redirect) url.searchParams.append('redirect', state?.redirect);
       res.redirect(302, url.toString());
       return;

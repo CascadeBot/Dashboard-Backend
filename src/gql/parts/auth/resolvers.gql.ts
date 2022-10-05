@@ -1,5 +1,7 @@
 import { createOauthUrl } from '@utils/discord/oauth';
+import { createUserAndSession } from '@utils/session';
 import { decodeLoginToken } from '@utils/tokens/login';
+import { createSessionToken } from '@utils/tokens/session';
 
 export default {
   Query: {
@@ -7,14 +9,21 @@ export default {
     getOAuthInfo: () => ({}),
   },
   Mutation: {
-    exchangeLoginToken: (ref, params) => {
+    exchangeLoginToken: async (ref, params) => {
       const parsedToken = decodeLoginToken(params.loginToken);
       // TODO throw official graphql error (status 400 with error code)
       if (!parsedToken.valid) throw new Error('invalid login token');
 
-      // TODO create session token and session
+      const { sessionId, userId } = await createUserAndSession(
+        parsedToken.payload.discordId,
+      );
+      const sessionToken = createSessionToken({
+        sessionId,
+        userId,
+      });
+
       return {
-        token: 'Hello world',
+        token: sessionToken,
       };
     },
   },
