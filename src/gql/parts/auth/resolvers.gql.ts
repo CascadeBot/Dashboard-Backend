@@ -1,9 +1,10 @@
+import { IResolvers } from 'mercurius';
 import { createOauthUrl } from '@utils/discord/oauth';
 import { createUserAndSession } from '@utils/session';
 import { decodeLoginToken } from '@utils/tokens/login';
 import { createSessionToken } from '@utils/tokens/session';
 
-export default {
+const resolvers: IResolvers = {
   Query: {
     // needed for some reason?
     getOAuthInfo: () => ({}),
@@ -37,3 +38,4 @@ export default {
     },
   },
 };
+export default resolvers;
