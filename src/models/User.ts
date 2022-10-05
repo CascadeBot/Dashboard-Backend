@@ -6,6 +6,7 @@ import {
   Unique,
 } from 'typeorm';
 
+// TODO add flyway migrations
 @Entity()
 @Unique('idx:did', ['discordId'])
 export class User extends BaseEntity {
