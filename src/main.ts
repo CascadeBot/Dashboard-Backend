@@ -28,3 +28,8 @@ bootstrap().catch((err) => {
   });
   process.exit(1);
 });
+
+// global todos:
+// TODO handle expired sessions
+// TODO what to sessions user object doesnt exist?
+// TODO test expiry of sessions
