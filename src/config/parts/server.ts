@@ -5,6 +5,7 @@ export interface ServerConf {
   basePath: string;
   host: string; // url to access (without base path) (do not end with slash)
   appUrl: string; // url to client application (dashboard) (must end with slash)
+  cors: string; // space seperated domains
 }
 
 const notEndWithSlashRegex = /[^/]$/;
@@ -15,4 +16,5 @@ export const serverConfSchema = joi.object<ServerConf>({
   basePath: joi.string().default('/'),
   host: joi.string().regex(notEndWithSlashRegex).required(),
   appUrl: joi.string().regex(endWithSlashRegex).required(),
+  cors: joi.string().default(''),
 });

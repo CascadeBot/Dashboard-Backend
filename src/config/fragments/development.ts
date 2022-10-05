@@ -3,7 +3,8 @@ export const developmentFragment = {
     port: 8081,
     basePath: '/',
     host: 'http://localhost:8081',
-    appUrl: 'http://localhost:8080/',
+    appUrl: 'http://localhost:3000/',
+    cors: 'http://localhost:3000 http://localhost:8081',
   },
   graphql: {
     playground: {
