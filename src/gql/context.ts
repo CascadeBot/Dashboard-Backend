@@ -1,6 +1,6 @@
 import { decodeSessionToken } from '@utils/tokens/session';
 import { FastifyRequest } from 'fastify';
-import { getRollingSession, Session } from '@utils/session';
+import { getRollingSession, removeAllSessions, Session } from '@utils/session';
 import { User } from '@models/User';
 import { ErrorCodes, GraphQLError } from './errors';
 
@@ -46,7 +46,15 @@ export class AuthHelper {
 
   async fetchUser(): Promise<User> {
     this.assertAuth();
-    return await User.findOneBy({ id: this.session.uid });
+    const user = await User.findOneBy({ id: this.session.uid });
+
+    // user belonging to session doesnt exist anymore, remove all sessions from this (missing) user
+    if (!user) {
+      await removeAllSessions(this.session.uid);
+      throw new GraphQLError(ErrorCodes.InvalidToken); // session without user is an invalid session
+    }
+
+    return user;
   }
 }
 

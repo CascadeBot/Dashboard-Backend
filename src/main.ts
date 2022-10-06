@@ -28,6 +28,3 @@ bootstrap().catch((err) => {
   });
   process.exit(1);
 });
-
-// global todos:
-// TODO what to sessions user object doesnt exist?

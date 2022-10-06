@@ -12,7 +12,7 @@ export enum ErrorCodes {
 export const errorMessages: { [key in ErrorCodes]: string } = {
   [ErrorCodes.Success]: 'Success',
   [ErrorCodes.InvalidTokenType]: 'Invalid authentication token type',
-  [ErrorCodes.InvalidToken]: 'Invalid authentication token',
+  [ErrorCodes.InvalidToken]: 'Invalid or expired authentication token',
   [ErrorCodes.NeedsAuth]: 'Needs authentication',
   [ErrorCodes.InvalidRedirect]: 'Invalid redirect variable',
   [ErrorCodes.InvalidLoginToken]: 'Invalid login token variable',

@@ -3,8 +3,9 @@ import { RedisClientType, SchemaFieldTypes } from 'redis';
 
 const log = scopedLogger('redis');
 
+// do not change schema without changing the index name, otherwise it will not update
 export const sessionsPrefix = 'cascade:sessions';
-export const sessionIndex = 'cascade:idx:sessions';
+export const sessionIndex = 'idx:cascade:sessions:uid';
 
 export const sessionKey = (sid: string) => `${sessionsPrefix}:${sid}`;
 
@@ -14,7 +15,7 @@ export async function setupSessions(client: RedisClientType) {
       sessionIndex,
       {
         '$.uid': {
-          type: SchemaFieldTypes.TEXT,
+          type: SchemaFieldTypes.TAG,
           AS: 'uid',
         },
       },

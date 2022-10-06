@@ -1,13 +1,17 @@
 import { User } from '@models/User';
 import { getRedis } from '@modules/redis';
-import { sessionKey } from '@modules/redis/sessions';
+import { sessionIndex, sessionKey } from '@modules/redis/sessions';
 import { randomUUID } from 'crypto';
 
 const expireSeconds = 7 * 24 * 60 * 60; // 1 week
 
 export interface Session {
-  ver: 1;
   uid: string;
+  ver: 1;
+}
+
+export interface SessionWithId extends Session {
+  id: string;
 }
 
 export async function createSession(userId: string): Promise<string> {
@@ -65,4 +69,19 @@ export async function getRollingSession(sessionId: string): Promise<Session> {
 export async function getSession(sessionId: string): Promise<Session> {
   const session = await getRedis().json.get(sessionKey(sessionId));
   return session as any;
+}
+
+export async function getAllSessions(userId: string): Promise<SessionWithId[]> {
+  const uid = userId.replace(/[-]/g, '\\$&');
+  const sessions = await getRedis().ft.search(sessionIndex, `@uid:{${uid}}`);
+  return sessions.documents.map((v) => ({
+    id: v.id.split(':').reverse()[0],
+    ...(v.value as any as Session),
+  }));
+}
+
+export async function removeAllSessions(userId: string): Promise<number> {
+  const sessions = await getAllSessions(userId);
+  const result = await getRedis().del(sessions.map((v) => sessionKey(v.id)));
+  return result;
 }
