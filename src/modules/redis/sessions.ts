@@ -8,7 +8,6 @@ export const sessionIndex = 'cascade:idx:sessions';
 
 export const sessionKey = (sid: string) => `${sessionsPrefix}:${sid}`;
 
-// TODO maybe run this on every reconnect, as indexes are not persistent by default
 export async function setupSessions(client: RedisClientType) {
   try {
     await client.ft.create(

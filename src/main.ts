@@ -30,6 +30,4 @@ bootstrap().catch((err) => {
 });
 
 // global todos:
-// TODO handle expired sessions
 // TODO what to sessions user object doesnt exist?
-// TODO test expiry of sessions
