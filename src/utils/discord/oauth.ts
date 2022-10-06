@@ -1,4 +1,5 @@
 import { config } from '@config';
+import { StatusError } from '@utils/errors';
 import { createOauthState, OauthState } from '@utils/tokens/oauthState';
 import fetch from 'node-fetch';
 import { URL, URLSearchParams } from 'url';
@@ -34,6 +35,8 @@ export async function discordAuthCodeToAccessToken(
     body: data,
     method: 'post',
   });
+  if (res.status >= 400 && res.status < 500)
+    throw new StatusError('failed to exchange code', 400);
   if (res.status !== 200) throw new Error('failed to exchange code');
 
   const json: any = await res.json();

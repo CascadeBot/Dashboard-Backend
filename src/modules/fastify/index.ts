@@ -5,6 +5,7 @@ import { setupPlayground } from '@modules/fastify/playground';
 import { config } from '@config';
 import { makeFastifyLogger, scopedLogger } from '@logger';
 import { OauthRouter, OauthRouterPrefix } from '@routes/oauth';
+import { StatusError } from '@utils/errors';
 
 const log = scopedLogger('fastify');
 
@@ -20,6 +21,14 @@ export async function setupFastify(): Promise<FastifyInstance> {
     if (err.validation) {
       reply.status(500).send({
         status: 500,
+        error: err.message,
+      });
+      return;
+    }
+
+    if (err instanceof StatusError) {
+      reply.status(err.statusCode).send({
+        status: err.statusCode,
         error: err.message,
       });
       return;

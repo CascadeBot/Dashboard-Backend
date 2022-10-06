@@ -6,6 +6,7 @@ import { config } from '@config';
 import { getUserFromCode } from '@utils/discord/oauth';
 import { createSessionToken } from '@utils/tokens/session';
 import { createUserAndSession } from '@utils/session';
+import { StatusError } from '@utils/errors';
 
 export const OauthRouterPrefix = '/oauth2';
 
@@ -27,12 +28,11 @@ export const OauthRouter: FastifyPluginAsyncTypebox = async (app) => {
       let state: OauthState | null = null;
       if (req.query.state) {
         const parsedState = parseOauthState(req.query.state);
-        // TODO invalid state -> status 400
-        if (!parsedState.valid) throw new Error('Invalid state variable');
+        if (!parsedState.valid)
+          throw new StatusError('Invalid state variable', 400);
         state = parsedState.payload;
       }
 
-      // TODO handle invalid code -> status 400
       const discordUser = await getUserFromCode(req.query.code);
       const { sessionId, userId } = await createUserAndSession(discordUser.id);
       const sessionToken = createSessionToken({
@@ -41,7 +41,6 @@ export const OauthRouter: FastifyPluginAsyncTypebox = async (app) => {
       });
 
       // 302 will redirect to a GET request
-      // TODO verify if redirect is valid
       const url = new URL(config.server.appUrl + 'login/callback');
       url.searchParams.append('token', sessionToken);
       if (state?.redirect) url.searchParams.append('redirect', state?.redirect);

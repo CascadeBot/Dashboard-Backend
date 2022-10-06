@@ -3,6 +3,7 @@ import { createOauthUrl } from '@utils/discord/oauth';
 import { createUserAndSession } from '@utils/session';
 import { decodeLoginToken } from '@utils/tokens/login';
 import { createSessionToken } from '@utils/tokens/session';
+import { redirectUrlSchema } from '@utils/tokens/oauthState';
 
 const resolvers: IResolvers = {
   Query: {
@@ -30,9 +31,15 @@ const resolvers: IResolvers = {
   },
   OAuthInfo: {
     authorizeUrl: (ref, params) => {
-      // TODO check if redirect is valid
+      // TODO throw 400 graphql error
+      const validRedirect = redirectUrlSchema
+        .allow(null)
+        .optional()
+        .validate(params.redirect);
+      if (validRedirect.error) throw new Error('invalid redirect');
+
       const url = createOauthUrl({
-        redirect: params.redirect,
+        redirect: validRedirect.value,
       });
       return url;
     },

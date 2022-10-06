@@ -7,6 +7,8 @@ export interface OauthState {
   redirect?: string;
 }
 
+export const redirectUrlSchema = joi.string().regex(/^\/([a-zA-Z0-9_-]+\/?)*$/);
+
 export function createOauthState(data: OauthStateInput): string {
   const minifiedJson = JSON.stringify({
     redirect: data.redirect,
@@ -16,7 +18,7 @@ export function createOauthState(data: OauthStateInput): string {
 }
 
 const stateSchema = joi.object<OauthState>({
-  redirect: joi.string().allow(null).optional(),
+  redirect: redirectUrlSchema.allow(null).optional(),
 });
 export type decodeOauthStateOutput =
   | { valid: false; payload: null }
