@@ -2,30 +2,46 @@ import { decodeSessionToken } from '@utils/tokens/session';
 import { FastifyRequest } from 'fastify';
 import { getRollingSession, Session } from '@utils/session';
 import { User } from '@models/User';
+import { ErrorCodes, GraphQLError } from './errors';
 
 export class AuthHelper {
+  private hasAuth = false;
   private session?: Session = null;
-  private token?: string;
+  private token?: string = null;
+  private error?: ErrorCodes = null;
 
-  constructor(token?: string) {
-    this.token = token;
-  }
-
-  async populate() {
-    const decodedToken = decodeSessionToken(this.token || '');
-    if (!decodedToken.valid) throw new Error('invalid token');
+  async populate(authHeader?: string) {
+    this.hasAuth = false;
+    if (!authHeader) {
+      return;
+    }
+    const [prefix, token] = authHeader.split(' ', 2);
+    if (prefix.toLowerCase() !== 'bearer') {
+      this.error = ErrorCodes.InvalidTokenType;
+      return;
+    }
+    const decodedToken = decodeSessionToken(token || '');
+    if (!decodedToken.valid) {
+      this.error = ErrorCodes.InvalidToken;
+      return;
+    }
     this.session = await getRollingSession(decodedToken.payload.sessionId);
+    if (!this.session) {
+      this.error = ErrorCodes.InvalidToken; // invalid token will also mean expired in this context
+      return;
+    }
+    this.token = token;
+    this.hasAuth = true;
   }
 
   get authenticated(): boolean {
-    return !!this.session;
+    return this.hasAuth;
   }
 
   // throw if user isnt authenticated
   assertAuth() {
-    if (!this.authenticated) {
-      throw new Error('Requires authentication');
-    }
+    if (this.error) throw new GraphQLError(this.error);
+    if (!this.hasAuth) throw new GraphQLError(ErrorCodes.NeedsAuth);
   }
 
   async fetchUser(): Promise<User> {
@@ -34,16 +50,9 @@ export class AuthHelper {
   }
 }
 
-// TODO throw proper errors with status codes
 export const buildContext = async (req: FastifyRequest) => {
-  let auth = new AuthHelper();
-  if (req.headers.authorization) {
-    const [prefix, token] = req.headers.authorization.split(' ', 2);
-    if (prefix.toLowerCase() !== 'bearer')
-      throw new Error('token type unsupported');
-    auth = new AuthHelper(token);
-    await auth.populate();
-  }
+  const auth = new AuthHelper();
+  await auth.populate(req.headers.authorization);
   return {
     auth,
   };

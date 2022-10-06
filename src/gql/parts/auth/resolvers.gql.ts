@@ -4,6 +4,7 @@ import { createUserAndSession } from '@utils/session';
 import { decodeLoginToken } from '@utils/tokens/login';
 import { createSessionToken } from '@utils/tokens/session';
 import { redirectUrlSchema } from '@utils/tokens/oauthState';
+import { ErrorCodes, GraphQLError } from '@gql/errors';
 
 const resolvers: IResolvers = {
   Query: {
@@ -13,8 +14,8 @@ const resolvers: IResolvers = {
   Mutation: {
     exchangeLoginToken: async (ref, params) => {
       const parsedToken = decodeLoginToken(params.loginToken);
-      // TODO throw official graphql error (status 400 with error code)
-      if (!parsedToken.valid) throw new Error('invalid login token');
+      if (!parsedToken.valid)
+        throw new GraphQLError(ErrorCodes.InvalidLoginToken);
 
       const { sessionId, userId } = await createUserAndSession(
         parsedToken.payload.discordId,
@@ -31,12 +32,12 @@ const resolvers: IResolvers = {
   },
   OAuthInfo: {
     authorizeUrl: (ref, params) => {
-      // TODO throw 400 graphql error
       const validRedirect = redirectUrlSchema
         .allow(null)
         .optional()
         .validate(params.redirect);
-      if (validRedirect.error) throw new Error('invalid redirect');
+      if (validRedirect.error)
+        throw new GraphQLError(ErrorCodes.InvalidRedirect);
 
       const url = createOauthUrl({
         redirect: validRedirect.value,
