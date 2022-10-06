@@ -7,6 +7,7 @@ export enum ErrorCodes {
   NeedsAuth = 'needs-auth',
   InvalidRedirect = 'invalid-redirect',
   InvalidLoginToken = 'invalid-login-token',
+  NotAllowed = 'not-allowed',
 }
 
 export const errorMessages: { [key in ErrorCodes]: string } = {
@@ -16,6 +17,7 @@ export const errorMessages: { [key in ErrorCodes]: string } = {
   [ErrorCodes.NeedsAuth]: 'Needs authentication',
   [ErrorCodes.InvalidRedirect]: 'Invalid redirect variable',
   [ErrorCodes.InvalidLoginToken]: 'Invalid login token variable',
+  [ErrorCodes.NotAllowed]: 'Not allowed to access this resource',
 };
 
 export const errorStatuses: { [key in ErrorCodes]: number } = {
@@ -26,6 +28,7 @@ export const errorStatuses: { [key in ErrorCodes]: number } = {
   [ErrorCodes.NeedsAuth]: 401,
   [ErrorCodes.InvalidRedirect]: 400,
   [ErrorCodes.InvalidLoginToken]: 400,
+  [ErrorCodes.NotAllowed]: 403,
 };
 
 export class GraphQLError extends mercurius.ErrorWithProps {
