@@ -48,13 +48,10 @@ export async function setupRedis(): Promise<void> {
     }
     if (promiseMethods) promiseMethods[0]();
   });
-  redisClient.on('error', (e) =>
-    log.error('Redis connection error', e, { evt: 'connect-error' }),
+  redisClient.on('error', () => false); // not listening to event will crash the process on error
+  redisClient.on('reconnecting', () =>
+    log.error('Reconnecting to redis', { evt: 'reconnect' }),
   );
-  redisClient.on('end', () => {
-    log.error('Redis connection ended', { evt: 'end' });
-    process.exit(1);
-  });
 
   log.info(`connecting to redis...`, { evt: 'connect' });
   await redisClient.connect();
