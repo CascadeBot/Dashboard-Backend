@@ -31,7 +31,7 @@ export async function setupRedis(): Promise<void> {
   // redis is now connected (or finished reconnecting)
   redisClient.on('ready', async () => {
     try {
-      await redisClient.ping();
+      await redisClient.ping(); // test a quick ping so we know redis works
     } catch {
       return;
     }
@@ -42,15 +42,13 @@ export async function setupRedis(): Promise<void> {
       log.info(`Configured redis!`, { evt: 'configure-end' });
     } catch (err) {
       log.error(err, { evt: 'configure-error' });
-      if (promiseMethods) promiseMethods[1]();
-      // TODO maybe exit process here? failure to setup is pretty bad
-      return;
+      if (promiseMethods) promiseMethods[1](); // reject connection
+      process.exit(1); // exit, failure to setup is really bad
     }
-    if (promiseMethods) promiseMethods[0]();
+    if (promiseMethods) promiseMethods[0](); // resolve connection
   });
-  redisClient.on('error', () => false); // not listening to event will crash the process on error
-  redisClient.on('reconnecting', () =>
-    log.error('Reconnecting to redis', { evt: 'reconnect' }),
+  redisClient.on('error', (e) =>
+    log.error('Redis connection error', e, { evt: 'connect-error' }),
   );
 
   log.info(`connecting to redis...`, { evt: 'connect' });
