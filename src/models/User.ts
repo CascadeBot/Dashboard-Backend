@@ -6,9 +6,8 @@ import {
   Unique,
 } from 'typeorm';
 
-// TODO add flyway migrations
-@Entity()
-@Unique('idx:did', ['discordId'])
+@Entity({ name: 'users' })
+@Unique('idx_did', ['discordId'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
