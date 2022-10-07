@@ -1,5 +1,7 @@
 version: '3.8'
 
+name: "cascade_dash_backend_dev"
+
 services:
   postgres:
     image: postgres
