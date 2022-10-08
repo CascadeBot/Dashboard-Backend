@@ -5,6 +5,7 @@ import { print } from 'graphql';
 import * as path from 'path';
 import mercurius from 'mercurius';
 import { scopedLogger } from '@logger';
+import { buildContext } from '@gql/context';
 
 const log = scopedLogger('graphql');
 
@@ -40,6 +41,7 @@ export async function setupMercurius(app: FastifyInstance): Promise<void> {
   app.register(mercurius, {
     resolvers: schema.resolvers,
     schema: schema.schema,
+    context: buildContext,
   });
   log.info('Successfully loaded GraphQL', {
     evt: 'setup-success',

@@ -1,0 +1,22 @@
+"""
+Active login sessions
+"""
+type Session {
+  id: ID!
+}
+
+"""
+Standard user object
+"""
+type User {
+  id: ID!
+  discordId: String!
+  sessions: [Session!]
+}
+
+type Query {
+  """
+  Get currently authenticated user
+  """
+  me: User
+}

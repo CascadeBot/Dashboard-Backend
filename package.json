@@ -4,16 +4,15 @@
     "dev": "nodemon -r tsconfig-paths/register src/main.ts",
     "build": "npm run build:pre && npm run build:compile && npm run build:post",
     "start": "node dist/main.js",
-
     "lint": "eslint --ext .ts,.js,.json src/",
     "lint:fix": "eslint --fix --ext .ts,.js,.json src/",
     "lint:report": "eslint --ext .ts,.js,.json --output-file eslint_report.json --format json src/",
-
     "build:pre": "rimraf dist/",
     "build:compile": "tsc && tsc-alias",
     "build:post": "copyfiles -u 1 src/**/*.graphql dist/"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.7.20",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
@@ -29,16 +28,24 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
+    "@fastify/cors": "^8.1.0",
+    "@fastify/type-provider-typebox": "^2.3.0",
     "@graphql-tools/load-files": "^6.6.1",
     "@graphql-tools/merge": "^8.3.6",
     "@graphql-tools/schema": "^9.0.4",
+    "@sinclair/typebox": "^0.24.44",
     "fastify": "^4.6.0",
     "graphql": "^16.6.0",
     "graphql-playground-html": "^1.6.30",
+    "jsonwebtoken": "^8.5.1",
     "mercurius": "^11.0.0",
     "neat-config": "^1.0.0",
+    "node-fetch": "^2.6.7",
+    "pg": "^8.8.0",
+    "redis": "^4.3.1",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.10",
     "winston": "^3.8.2",
-    "winston-console-format": "^1.0.8",
-    "yup": "^0.32.11"
+    "winston-console-format": "^1.0.8"
   }
 }

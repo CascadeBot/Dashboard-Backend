@@ -1,6 +1,0 @@
-type Query {
-  """
-  Hello world graphql test
-  """
-  Hello: String!
-}
