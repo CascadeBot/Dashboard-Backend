@@ -25,7 +25,6 @@ export const errorStatuses: { [key in ErrorCodes]: number } = {
   [ErrorCodes.InvalidTokenType]: 400,
   [ErrorCodes.InvalidToken]: 401,
   [ErrorCodes.NeedsAuth]: 401,
-  [ErrorCodes.NeedsAuth]: 401,
   [ErrorCodes.InvalidRedirect]: 400,
   [ErrorCodes.InvalidLoginToken]: 400,
   [ErrorCodes.NotAllowed]: 403,
