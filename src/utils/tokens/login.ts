@@ -1,7 +1,7 @@
 import { config } from '@config';
 import * as jwt from 'jsonwebtoken';
 
-const loginAlgorithm: jwt.Algorithm = 'RS256';
+const loginAlgorithm: jwt.Algorithm = 'ES256';
 
 interface InternalLoginTokenData {
   did: string;

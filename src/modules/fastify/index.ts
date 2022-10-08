@@ -44,7 +44,7 @@ export async function setupFastify(): Promise<FastifyInstance> {
   // plugins & routes
   log.info(`setting up plugins and routes`, { evt: 'setup-plugins' });
   await app.register(cors, {
-    origin: config.server.cors.split(' ').filter((v) => v.length),
+    origin: config.server.cors.split(' ').filter((v) => v.length > 0),
   });
   await app.register(
     async (api, opts, done) => {
