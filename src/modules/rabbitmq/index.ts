@@ -1,6 +1,7 @@
 import { config } from '@config';
 import { scopedLogger } from '@logger';
 import { connect, Connection, Channel } from 'amqplib';
+import { startCallbackConsumer } from './response';
 
 const log = scopedLogger('rabbitmq');
 
@@ -18,6 +19,8 @@ export async function setupRabbitMQ() {
     exclusive: true,
   });
   callbackQueue = callbackQueueRes.queue;
+
+  startCallbackConsumer();
 
   log.info(`Connected to rabbitMQ!`, { evt: 'success' });
 }
