@@ -52,8 +52,7 @@ export interface BroadcastOptions
 const callbackQueue: Map<string, CallbackQueueItem> = new Map();
 
 function buildMessage(options: MessageOptions): MessageData {
-  let message: Buffer = Buffer.from('');
-  if (options.body) message = Buffer.from(JSON.stringify(options.body));
+  const message = Buffer.from(JSON.stringify(options.body ?? {}));
 
   const headers = {};
   if (options.headers) Object.assign(headers, options.headers);
@@ -157,12 +156,22 @@ function addToCallbackQueue(item: CallbackQueueItem) {
 }
 
 export function startCallbackConsumer() {
-  getRMQ().consume(getCallbackQueue(), (msg) => {
+  const channel = getRMQ();
+  channel.consume(getCallbackQueue(), (msg) => {
     const id = msg.properties.correlationId;
-    if (!id) return; // no correlation, ignore
+    if (!id) {
+      channel.reject(msg, false);
+      return; // no correlation, ignore
+    }
 
     const queueItem = callbackQueue.get(id);
-    if (!queueItem) return; // not meant for us? ignore
+    if (!queueItem) {
+      channel.reject(msg, false);
+      return; // not meant for us? ignore
+    }
+
+    // we acknowledge the message, now consumed from the queue
+    channel.ack(msg);
 
     queueItem.messages.push(msg);
     if (queueItem.messages.length < queueItem.amount) return; // haven't received all messages, continue

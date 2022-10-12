@@ -1,7 +1,7 @@
 import { cascadeActions } from './actions';
 import { sendParsedDirectMessage } from '../parsed';
 
-const cacheExpiry = 5 * 1000; // 5 seconds
+const cacheExpiry = 60 * 1000; // 1 minute
 let cachedShardCount: number | null = null;
 let cacheTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -9,7 +9,7 @@ interface ShardCount {
   shard_count: number;
 }
 
-async function updateShardCount(): Promise<number> {
+export async function updateShardCount(): Promise<number> {
   const shardInfo = await sendParsedDirectMessage<ShardCount>({
     routingKey: 'meta',
     headers: {
