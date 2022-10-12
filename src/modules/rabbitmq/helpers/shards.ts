@@ -2,6 +2,8 @@ import { getShardCount } from './meta';
 import { sendParsedBroadcastMessage, sendParsedDirectMessage } from '../parsed';
 import { Request } from './types';
 
+//TODO retry if from wrong shard
+
 /**
  * send to and receive from specific shard
  */
