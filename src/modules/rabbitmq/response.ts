@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { getCallbackQueue, getRMQ } from '.';
 
 const standardTimeout = 5 * 1000; // 5 seconds
+const directExchange = 'amq.direct';
 
 interface CallbackQueueItem {
   resolve: (reply: any) => void;
@@ -104,11 +105,16 @@ export async function sendDirectMessage(
   const message = buildMessage(options);
   const callback = buildCallback(options);
 
-  const success = getRMQ().publish('', options.routingKey, message.body, {
-    replyTo: getCallbackQueue(),
-    correlationId: callback.item.id,
-    headers: message.headers,
-  });
+  const success = getRMQ().publish(
+    directExchange,
+    options.routingKey,
+    message.body,
+    {
+      replyTo: getCallbackQueue(),
+      correlationId: callback.item.id,
+      headers: message.headers,
+    },
+  );
   if (!success) throw new Error('failed to publish');
 
   // return value without reply
@@ -127,11 +133,16 @@ export async function sendBroadcastMessage(
   const message = buildMessage(options);
   const callback = buildCallback(options);
 
-  const success = getRMQ().publish('', options.routingKey, message.body, {
-    replyTo: getCallbackQueue(),
-    correlationId: callback.item.id,
-    headers: message.headers,
-  });
+  const success = getRMQ().publish(
+    directExchange,
+    options.routingKey,
+    message.body,
+    {
+      replyTo: getCallbackQueue(),
+      correlationId: callback.item.id,
+      headers: message.headers,
+    },
+  );
   if (!success) throw new Error('failed to publish');
 
   // return value without reply
