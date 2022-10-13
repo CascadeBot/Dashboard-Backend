@@ -11,9 +11,9 @@ Discord guild
 type DiscordGuild {
   id: ID!
   name: String!
-  icon_url: String
-  member_count: Int!
-  online_count: Int!
+  iconUrl: String
+  memberCount: Int!
+  onlineCount: Int!
 }
 
 """
@@ -28,7 +28,7 @@ Discord user
 """
 type DiscordUser {
   id: ID!
-  avatar_url: String!
+  avatarUrl: String!
   discriminator: String!
   name: String!
 }

@@ -7,6 +7,7 @@ import { broadcastRequestToShards } from '@modules/rabbitmq/helpers/shards';
 import { ResponseError } from '@modules/rabbitmq/parsed';
 import { createLoader } from '@utils/loader';
 import NodeCache from 'node-cache';
+import { ApiDiscordGuild, ApiDiscordUser } from './types';
 
 const mutualGuildCache = new NodeCache({
   stdTTL: 5 * 60, // 5 minutes per user
@@ -14,9 +15,9 @@ const mutualGuildCache = new NodeCache({
 
 interface DiscordGuild {
   id: string;
-  icon_url?: string;
-  online_count: number;
-  member_count: number;
+  iconUrl?: string;
+  onlineCount: number;
+  memberCount: number;
   name: string;
 }
 export async function userGetMutualGuilds(
@@ -29,9 +30,9 @@ export async function userGetMutualGuilds(
   }
 
   // cache miss, fetch from api
-  let guilds;
+  let guilds: ApiDiscordGuild[][];
   try {
-    guilds = await broadcastRequestToShards<DiscordGuild[]>(
+    guilds = await broadcastRequestToShards<ApiDiscordGuild[]>(
       cascadeActions.USER_GET_MUTUAL_GUILDS,
       {
         body: {
@@ -49,7 +50,17 @@ export async function userGetMutualGuilds(
     throw err;
   }
 
-  const flattedGuilds = guilds.flat();
+  const flattedGuilds = guilds.flatMap((guilds) =>
+    guilds.map(
+      (guild): DiscordGuild => ({
+        id: guild.id,
+        name: guild.name,
+        iconUrl: guild.icon_url,
+        memberCount: guild.member_count,
+        onlineCount: guild.online_count,
+      }),
+    ),
+  );
   mutualGuildCache.set(userId, flattedGuilds);
   return flattedGuilds;
 }
@@ -57,11 +68,11 @@ export async function userGetMutualGuilds(
 interface DiscordUser {
   id: string;
   name: string;
-  avatar_url: string;
+  avatarUrl: string;
   discriminator: string;
 }
 export async function userGetDiscordUser(userId: string): Promise<DiscordUser> {
-  const user = await requestFromResources<DiscordUser>(
+  const user = await requestFromResources<ApiDiscordUser>(
     cascadeActions.USER_GET_BY_ID,
     {
       body: {
@@ -69,7 +80,12 @@ export async function userGetDiscordUser(userId: string): Promise<DiscordUser> {
       },
     },
   );
-  return user;
+  return {
+    id: user.id,
+    name: user.name,
+    avatarUrl: user.avatar_url,
+    discriminator: user.discriminator,
+  };
 }
 
 export async function createUserLoaders() {
