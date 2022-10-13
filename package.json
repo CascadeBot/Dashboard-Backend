@@ -37,7 +37,7 @@
     "@sinclair/typebox": "^0.24.44",
     "amqplib": "^0.10.3",
     "dataloader": "^2.1.0",
-    "fastify": "^4.6.0",
+    "fastify": "^4.8.1",
     "graphql": "^16.6.0",
     "graphql-playground-html": "^1.6.30",
     "jsonwebtoken": "^8.5.1",
