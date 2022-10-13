@@ -1,7 +1,3 @@
-import {
-  userGetDiscordUser,
-  userGetMutualGuilds,
-} from '@controllers/usercontroller';
 import { ErrorCodes, GraphQLError } from '@gql/errors';
 import { getAllSessions } from '@utils/session';
 import { IResolvers } from 'mercurius';
@@ -20,7 +16,7 @@ const resolvers: IResolvers = {
       ctx.auth.assertAuth();
       const user = await ctx.auth.fetchUser();
       return {
-        guilds: await userGetMutualGuilds(user.discordId),
+        guilds: await ctx.loaders.user.mutualGuilds.load(user.discordId),
       };
     },
   },
@@ -35,8 +31,8 @@ const resolvers: IResolvers = {
         id: v.id,
       }));
     },
-    discord: async (ref) => {
-      return await userGetDiscordUser(ref.discordId);
+    discord: async (ref, params, ctx) => {
+      return await ctx.loaders.user.discordUser.load(ref.discordId);
     },
   },
 };

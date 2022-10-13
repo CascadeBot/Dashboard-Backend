@@ -1,14 +1,26 @@
-import { decodeSessionToken } from '@utils/tokens/session';
-import { FastifyRequest } from 'fastify';
-import { getRollingSession, removeAllSessions, Session } from '@utils/session';
+import { ErrorCodes, GraphQLError } from '@gql/errors';
 import { User } from '@models/User';
-import { ErrorCodes, GraphQLError } from './errors';
+import { getRollingSession, removeAllSessions, Session } from '@utils/session';
+import { decodeSessionToken } from '@utils/tokens/session';
+import DataLoader from 'dataloader';
+import { FastifyRequest } from 'fastify';
 
-export class AuthHelper {
+class AuthHelper {
   private hasAuth = false;
   private session?: Session = null;
-  private token?: string = null;
   private error?: ErrorCodes = null;
+  private currentUserLoader: DataLoader<string, User>;
+
+  constructor() {
+    this.currentUserLoader = new DataLoader(
+      async ([id]: string[]): Promise<User[]> => {
+        return [await User.findOneBy({ id })];
+      },
+      {
+        batch: false,
+      },
+    );
+  }
 
   async populate(authHeader?: string) {
     this.hasAuth = false;
@@ -30,7 +42,6 @@ export class AuthHelper {
       this.error = ErrorCodes.InvalidToken; // invalid token will also mean expired in this context
       return;
     }
-    this.token = token;
     this.hasAuth = true;
   }
 
@@ -44,9 +55,15 @@ export class AuthHelper {
     if (!this.hasAuth) throw new GraphQLError(ErrorCodes.NeedsAuth);
   }
 
+  // clears cache for user
+  clearCache() {
+    this.currentUserLoader.clearAll();
+  }
+
+  // gets user from db, cached per request
   async fetchUser(): Promise<User> {
     this.assertAuth();
-    const user = await User.findOneBy({ id: this.session.uid });
+    const user = await this.currentUserLoader.load(this.session.uid);
 
     // user belonging to session doesnt exist anymore, remove all sessions from this (missing) user
     if (!user) {
@@ -58,17 +75,10 @@ export class AuthHelper {
   }
 }
 
-export const buildContext = async (req: FastifyRequest) => {
+export async function buildAuthContext(req: FastifyRequest) {
   const auth = new AuthHelper();
   await auth.populate(req.headers.authorization);
   return {
     auth,
   };
-};
-
-type PromiseType<T> = T extends PromiseLike<infer U> ? U : T;
-
-declare module 'mercurius' {
-  interface MercuriusContext
-    extends PromiseType<ReturnType<typeof buildContext>> {}
 }

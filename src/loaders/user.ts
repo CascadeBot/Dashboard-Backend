@@ -5,8 +5,13 @@ import {
 import { requestFromResources } from '@modules/rabbitmq/helpers/resources';
 import { broadcastRequestToShards } from '@modules/rabbitmq/helpers/shards';
 import { ResponseError } from '@modules/rabbitmq/parsed';
+import { createLoader } from '@utils/loader';
+import NodeCache from 'node-cache';
 
-// TODO cache the shit out of this
+const mutualGuildCache = new NodeCache({
+  stdTTL: 5 * 60, // 5 minutes per user
+});
+
 interface DiscordGuild {
   id: string;
   icon_url?: string;
@@ -17,6 +22,13 @@ interface DiscordGuild {
 export async function userGetMutualGuilds(
   userId: string,
 ): Promise<DiscordGuild[]> {
+  // check cache first
+  const cachedGuilds = mutualGuildCache.get<DiscordGuild[]>(userId);
+  if (cachedGuilds) {
+    return cachedGuilds;
+  }
+
+  // cache miss, fetch from api
   let guilds;
   try {
     guilds = await broadcastRequestToShards<DiscordGuild[]>(
@@ -37,7 +49,9 @@ export async function userGetMutualGuilds(
     throw err;
   }
 
-  return guilds.flat();
+  const flattedGuilds = guilds.flat();
+  mutualGuildCache.set(userId, flattedGuilds);
+  return flattedGuilds;
 }
 
 interface DiscordUser {
@@ -56,4 +70,11 @@ export async function userGetDiscordUser(userId: string): Promise<DiscordUser> {
     },
   );
   return user;
+}
+
+export async function createUserLoaders() {
+  return {
+    mutualGuilds: createLoader((id: string) => userGetMutualGuilds(id)),
+    discordUser: createLoader((id: string) => userGetDiscordUser(id)),
+  };
 }
