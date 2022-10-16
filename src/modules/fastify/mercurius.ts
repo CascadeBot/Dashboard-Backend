@@ -15,7 +15,7 @@ interface GraphQLResolvableSchema {
 }
 
 async function loadGraphqlParts(dir: string): Promise<GraphQLResolvableSchema> {
-  const resolversArray = await loadFiles(path.join(dir, '**/*.gql.ts'));
+  const resolversArray = await loadFiles(path.join(dir, '**/*.gql.*'));
   const typesArray = await loadFiles(path.join(dir, '**/*.graphql'));
 
   const resolvers = mergeResolvers(resolversArray);
