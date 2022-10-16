@@ -4,4 +4,3 @@ config.json
 dist
 .git
 .vscode
-Dockerfile
