@@ -7,19 +7,13 @@ import { broadcastRequestToShards } from '@modules/rabbitmq/helpers/shards';
 import { ResponseError } from '@modules/rabbitmq/parsed';
 import { createLoader } from '@utils/loader';
 import NodeCache from 'node-cache';
-import { ApiDiscordGuild, ApiDiscordUser } from './types';
+import { ApiDiscordGuild, ApiDiscordUser } from './api-types';
+import { DiscordGuild, DiscordUser } from './loader-types';
 
 const mutualGuildCache = new NodeCache({
   stdTTL: 5 * 60, // 5 minutes per user
 });
 
-interface DiscordGuild {
-  id: string;
-  iconUrl?: string;
-  onlineCount: number;
-  memberCount: number;
-  name: string;
-}
 export async function userGetMutualGuilds(
   userId: string,
 ): Promise<DiscordGuild[]> {
@@ -65,12 +59,6 @@ export async function userGetMutualGuilds(
   return flattedGuilds;
 }
 
-interface DiscordUser {
-  id: string;
-  name: string;
-  avatarUrl: string;
-  discriminator: string;
-}
 export async function userGetDiscordUser(userId: string): Promise<DiscordUser> {
   const user = await requestFromResources<ApiDiscordUser>(
     cascadeActions.USER_GET_BY_ID,
