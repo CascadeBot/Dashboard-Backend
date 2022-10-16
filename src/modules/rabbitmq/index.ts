@@ -10,7 +10,7 @@ let channel: Channel | null = null;
 let callbackQueue: string | null = null;
 
 export async function setupRabbitMQ() {
-  log.info(`connecting to rabbitmq...`, { evt: 'connect' });
+  log.info(`Connecting to rabbitMQ...`, { evt: 'connect' });
   connection = await connect(config.rabbitmq.url);
   channel = await connection.createChannel();
 
