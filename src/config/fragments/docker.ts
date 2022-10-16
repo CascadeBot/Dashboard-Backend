@@ -5,4 +5,7 @@ export const dockerDevelopmentFragment = {
   postgres: {
     url: 'postgres://postgres:postgres@postgres:5432/postgres',
   },
+  rabbitmq: {
+    url: 'amqp://rabbitmq',
+  },
 };

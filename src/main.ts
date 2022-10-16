@@ -4,6 +4,7 @@ import { setupFastify } from '@modules/fastify';
 import { scopedLogger } from '@logger';
 import { setupRedis } from '@modules/redis';
 import { setupTypeORM } from '@modules/typeorm';
+import { setupRabbitMQ } from '@modules/rabbitmq';
 
 const log = scopedLogger('backend');
 
@@ -12,6 +13,7 @@ async function bootstrap(): Promise<void> {
     evt: 'setup',
   });
 
+  await setupRabbitMQ();
   await setupTypeORM();
   await setupRedis();
   await setupFastify();

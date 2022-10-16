@@ -12,6 +12,13 @@ const resolvers: IResolvers = {
         discordId: user.discordId,
       };
     },
+    mutualGuilds: async (ref, params, ctx) => {
+      ctx.auth.assertAuth();
+      const user = await ctx.auth.fetchUser();
+      return {
+        guilds: await ctx.loaders.user.mutualGuilds.load(user.discordId),
+      };
+    },
   },
   User: {
     sessions: async (ref, params, ctx) => {
@@ -23,6 +30,9 @@ const resolvers: IResolvers = {
       return (await getAllSessions(ref.id)).map((v) => ({
         id: v.id,
       }));
+    },
+    discord: async (ref, params, ctx) => {
+      return await ctx.loaders.user.discordUser.load(ref.discordId);
     },
   },
 };

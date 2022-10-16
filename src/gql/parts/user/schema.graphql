@@ -6,12 +6,41 @@ type Session {
 }
 
 """
+Discord guild
+"""
+type DiscordGuild {
+  id: ID!
+  name: String!
+  iconUrl: String
+  memberCount: Int!
+  onlineCount: Int!
+}
+
+"""
+Mutual guilds response
+"""
+type MutualGuilds {
+  guilds: [DiscordGuild!]!
+}
+
+"""
+Discord user
+"""
+type DiscordUser {
+  id: ID!
+  avatarUrl: String!
+  discriminator: String!
+  name: String!
+}
+
+"""
 Standard user object
 """
 type User {
   id: ID!
   discordId: String!
   sessions: [Session!]
+  discord: DiscordUser!
 }
 
 type Query {
@@ -19,4 +48,9 @@ type Query {
   Get currently authenticated user
   """
   me: User
+
+  """
+  Get guilds the authenticated user shares with the bot
+  """
+  mutualGuilds: MutualGuilds
 }

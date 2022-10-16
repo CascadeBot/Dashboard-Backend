@@ -32,6 +32,9 @@ iMnSvoYW+Z4FF44r/E5Vw2h6rlYVcpfS46TS9MaWK4fLpZPiMgdEGXvB5g==
     url: 'postgres://postgres:postgres@localhost:5432/postgres',
     syncSchema: true,
   },
+  rabbitmq: {
+    url: 'amqp://localhost',
+  },
 };
 
 /*
