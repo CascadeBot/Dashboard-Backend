@@ -40,7 +40,10 @@ export class TypeormLogger implements Logger {
 export function createSource(): DataSource {
   const commonOptions: DataSourceOptions = {
     type: 'postgres',
-    entities: [path.join(__dirname, '../../models/**/*.ts')],
+    entities: [
+      path.join(__dirname, '../../models/**/*.ts'),
+      path.join(__dirname, '../../models/**/*.js'),
+    ],
     synchronize: config.postgres.syncSchema,
     logging: ['warn', 'info', 'log'],
     logger: new TypeormLogger(),
