@@ -10,7 +10,7 @@ export class ResponseError extends Error {
   error_code: string;
   status_code: number;
 
-  constructor(msg: IResponseError) {
+  constructor(msg: RMQResponseError) {
     super(msg.error.message);
     this.name = 'ResponseError';
     this.status_code = msg.status_code;
@@ -18,29 +18,29 @@ export class ResponseError extends Error {
   }
 }
 
-interface ResponseErrorSub {
+interface RMQResponseErrorSub {
   error_code: string;
   message: string;
 }
 
-export type Response<T> = ResponseSuccess<T> | IResponseError;
+export type Response<T> = RMQResponseSuccess<T> | RMQResponseError;
 
-interface ResponseSuccess<T> {
+interface RMQResponseSuccess<T> {
   status_code: number;
   error: undefined;
   data: T;
 }
 
-interface IResponseError {
+interface RMQResponseError {
   status_code: number;
-  error: ResponseErrorSub;
+  error: RMQResponseErrorSub;
   data: undefined;
 }
 
 function parseMessage<T>(msg: Message): T {
   const dataObject: Response<T> = JSON.parse(msg.content.toString('utf-8'));
   if (dataObject.error) {
-    throw new ResponseError(dataObject as IResponseError);
+    throw new ResponseError(dataObject as RMQResponseError);
   }
   return dataObject.data;
 }

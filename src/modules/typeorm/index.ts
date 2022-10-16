@@ -1,4 +1,4 @@
-import { DataSource, Logger } from 'typeorm';
+import { DataSource, DataSourceOptions, Logger } from 'typeorm';
 import { config } from '@config';
 import { scopedLogger } from '@logger';
 import * as path from 'path';
@@ -38,13 +38,25 @@ export class TypeormLogger implements Logger {
 }
 
 export function createSource(): DataSource {
-  return new DataSource({
+  const commonOptions: DataSourceOptions = {
     type: 'postgres',
-    url: config.postgres.url,
     entities: [path.join(__dirname, '../../models/**/*.ts')],
     synchronize: config.postgres.syncSchema,
     logging: ['warn', 'info', 'log'],
     logger: new TypeormLogger(),
+  };
+
+  if (typeof config.postgres.url === 'string') {
+    return new DataSource({
+      ...commonOptions,
+      url: config.postgres.url,
+    });
+  }
+
+  // specific options instead of connection string
+  return new DataSource({
+    ...commonOptions,
+    ...config.postgres.url,
   });
 }
 
