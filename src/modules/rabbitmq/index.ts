@@ -22,7 +22,7 @@ export async function setupRabbitMQ() {
 
   startCallbackConsumer();
 
-  log.info(`Connected to rabbitMQ!`, { evt: 'success' });
+  log.info(`Connected to RabbitMQ!`, { evt: 'success' });
 }
 
 export function getRMQ(): Channel | null {
