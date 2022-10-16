@@ -10,7 +10,7 @@ export async function requestFromResources<T, K = Record<string, any>>(
   options: Request<K>,
 ): Promise<T> {
   return await sendParsedDirectMessage<T>({
-    routingKey: `resource`,
+    routingKey: 'resource',
     body: options.body,
     headers: {
       ...options.headers,
@@ -28,7 +28,7 @@ export async function sendToResources<K = Record<string, any>>(
   options: Request<K>,
 ): Promise<void> {
   await sendParsedDirectMessage({
-    routingKey: `resource`,
+    routingKey: 'resource',
     body: options.body,
     headers: {
       ...options.headers,
